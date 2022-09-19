@@ -1,5 +1,6 @@
 import "./widget.scss";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
@@ -19,6 +20,7 @@ const Widget = ({ type }) => {
         title: "USERS",
         isMoney: false,
         link: "See all users",
+        query: "users",
         icon: (
           <PersonOutlinedIcon
             className="icon"
@@ -59,10 +61,10 @@ const Widget = ({ type }) => {
         ),
       };
       break;
-    case "balance":
+    case "product":
       data = {
-        title: "BALANCE",
-        isMoney: true,
+        title: "PRODUCTS",
+        query: "products",
         link: "See details",
         icon: (
           <AccountBalanceWalletOutlinedIcon
@@ -86,12 +88,12 @@ const Widget = ({ type }) => {
       const prevMonth = new Date(new Date().setMonth(today.getMonth() - 2));
 
       const lastMonthQuery = query(
-        collection(db, "users"),
+        collection(db, data.query),
         where("timeStamp", "<=", today),
         where("timeStamp", ">", lastMonth)
       );
       const prevMonthQuery = query(
-        collection(db, "users"),
+        collection(db, data.query),
         where("timeStamp", "<=", lastMonth),
         where("timeStamp", ">", prevMonth)
       );
@@ -119,8 +121,8 @@ const Widget = ({ type }) => {
         <span className="link">{data.link}</span>
       </div>
       <div className="right">
-        <div className="percentage positive">
-          <KeyboardArrowUpIcon />
+        <div className={`percentage ${diff < 0 ? "negative" : "positive"}`}>
+          {diff < 0 ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
           {diff} %
         </div>
         {data.icon}
